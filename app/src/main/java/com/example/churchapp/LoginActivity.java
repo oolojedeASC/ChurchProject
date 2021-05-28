@@ -5,9 +5,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,42 +25,16 @@ import static android.content.ContentValues.TAG;
 
 public class LoginActivity extends AppCompatActivity {
 
+    private Button logBtn;
+    private TextView forgotPassView;
+    private TextView regView;
+    private EditText emailView;
+    private EditText passwordView;
+    private FirebaseAuth mAuth;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
-
-        //Authetication
-        private FirebaseAuth mAuth;
-        mAuth = FirebaseAuth.getInstance();
-
-        // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        updateUI(currentUser);
-
-        mAuth.signInWithCustomToken(mCustomToken)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "signInWithCustomToken:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            updateUI(user);
-                        } else {
-                            // If sign
-                            //
-                            // in fails, display a message to the user.
-                            Log.d(TAG, "signInWithCustomToken:failure", task.getException());
-                            Toast.makeText(LoginActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                            updateUI(null);
-                        }
-                    }
-                });
-
-
 
 
         //Try method removes the top bar from activity
@@ -67,7 +44,11 @@ public class LoginActivity extends AppCompatActivity {
         }
         catch (NullPointerException e){}
 
-        TextView regView=(TextView) findViewById(R.id.registerView);
+
+        mAuth = FirebaseAuth.getInstance();
+
+        initializeUI();
+
         regView.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
@@ -75,16 +56,6 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-
-
-        Button logBut = (Button) findViewById(R.id.loginButton);
-        logBut.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v){
-                switchMain();
-            }
-        });
-
-        TextView forgotPassView=(TextView) findViewById(R.id.forgotPassView);
         forgotPassView.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
@@ -92,11 +63,50 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        logBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loginUserAccount();
+            }
+        });
 
 
+    }
 
 
+    private void loginUserAccount() {
+        //progressBar.setVisibility(View.VISIBLE);
 
+        String email, password;
+        email = emailView.getText().toString();
+        password = passwordView.getText().toString();
+
+        if (TextUtils.isEmpty(email)) {
+            Toast.makeText(getApplicationContext(), "Please enter email...", Toast.LENGTH_LONG).show();
+            return;
+        }
+        if (TextUtils.isEmpty(password)) {
+            Toast.makeText(getApplicationContext(), "Please enter password!", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(getApplicationContext(), "Login successful!", Toast.LENGTH_LONG).show();
+                            //progressBar.setVisibility(View.GONE);
+
+                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                            startActivity(intent);
+                        }
+                        else {
+                            Toast.makeText(getApplicationContext(), "Login failed! Please try again later", Toast.LENGTH_LONG).show();
+                            //progressBar.setVisibility(View.GONE);
+                        }
+                    }
+                });
     }
 
 
@@ -108,26 +118,20 @@ public class LoginActivity extends AppCompatActivity {
         startActivity(switchActivityIntent);
     }
 
-    private void switchMain(){
-        Intent switchActivityIntent = new Intent(this, MainActivity.class);
-        startActivity(switchActivityIntent);
-    }
-
     private void switchForgotPass(){
         Intent switchActivityIntent = new Intent(this, ForgotPassword.class);
         startActivity(switchActivityIntent);
     }
 
-    //Change UI according to user data.
-    public void updateUI(FirebaseUser account){
+    private void initializeUI() {
+        logBtn = findViewById(R.id.loginButton);
+        forgotPassView = findViewById(R.id.forgotPassView);
+        regView = findViewById(R.id.registerView);
+        emailView = findViewById(R.id.editTextEmail);
+        passwordView = findViewById(R.id.editTextTextPassword);
 
-        if(account != null){
-            Toast.makeText(this,"U Signed In successfully",Toast.LENGTH_LONG).show();
-            startActivity(new Intent(this, MainActivity.class));
-
-        }else {
-            Toast.makeText(this,"U Didnt signed in", Toast.LENGTH_LONG).show();
-        }
-
+        //Add progress bars if you have time
+        // progressBar = findViewById(R.id.progressBar);
     }
+
 }
