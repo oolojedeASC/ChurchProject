@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +29,7 @@ public class SignupActivity extends AppCompatActivity {
     private EditText lName;
     private EditText emailView;
     private EditText passwordView;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,11 +63,11 @@ public class SignupActivity extends AppCompatActivity {
         lName = findViewById(R.id.editTextLastName);
         emailView = findViewById(R.id.editTextEmail);
         passwordView = findViewById(R.id.editTextTextPassword);
+        //progressBar = findViewById(R.id.progressBar);
 
     }
 
     private void registerNewUser() {
-        //progressBar.setVisibility(View.VISIBLE);
 
         String firstName, lastName, email, password;
         firstName = fName.getText().toString();
@@ -96,6 +98,7 @@ public class SignupActivity extends AppCompatActivity {
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
+                        //progressBar.setVisibility(View.VISIBLE);
                         if (task.isSuccessful()) {
                             Toast.makeText(getApplicationContext(), "Registration successful!", Toast.LENGTH_LONG).show();
                             //progressBar.setVisibility(View.GONE);

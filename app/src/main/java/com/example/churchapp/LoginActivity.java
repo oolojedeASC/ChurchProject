@@ -23,6 +23,8 @@ import com.google.firebase.auth.FirebaseUser;
 import static android.content.ContentValues.TAG;
 
 
+
+//Need to make sure you cant go back from main activity using the back button on a phone.
 public class LoginActivity extends AppCompatActivity {
 
     private Button logBtn;
@@ -90,6 +92,7 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
+
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
@@ -114,7 +117,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
     private void switchSignUp(){
-        Intent switchActivityIntent = new Intent(this, SignupActivity.class);
+        Intent switchActivityIntent = new Intent(this, MainActivity.class);
         startActivity(switchActivityIntent);
     }
 
@@ -128,7 +131,7 @@ public class LoginActivity extends AppCompatActivity {
         forgotPassView = findViewById(R.id.forgotPassView);
         regView = findViewById(R.id.registerView);
         emailView = findViewById(R.id.editTextEmail);
-        passwordView = findViewById(R.id.editTextTextPassword);
+        passwordView = findViewById(R.id.editTextPassword);
 
         //Add progress bars if you have time
         // progressBar = findViewById(R.id.progressBar);
