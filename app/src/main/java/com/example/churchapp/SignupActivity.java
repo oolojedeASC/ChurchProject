@@ -23,7 +23,7 @@ import org.w3c.dom.Text;
 public class SignupActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
-    private TextView regView;
+    private TextView logView;
     private Button signupBtn;
     private EditText fName;
     private EditText lName;
@@ -52,12 +52,18 @@ public class SignupActivity extends AppCompatActivity {
             }
         });
 
+        logView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switchLogin();
+            }
+        });
     }
 
 
 
     private void initializeUI() {
-        regView = findViewById(R.id.loginView);
+        logView = findViewById(R.id.loginView);
         signupBtn = findViewById(R.id.signUpButton);
         fName = findViewById(R.id.editTextFirstName);
         lName = findViewById(R.id.editTextLastName);
@@ -65,6 +71,11 @@ public class SignupActivity extends AppCompatActivity {
         passwordView = findViewById(R.id.editTextTextPassword);
         //progressBar = findViewById(R.id.progressBar);
 
+    }
+
+    private void switchLogin(){
+        Intent switchActivityIntent = new Intent(this, LoginActivity.class);
+        startActivity(switchActivityIntent);
     }
 
     private void registerNewUser() {

@@ -75,6 +75,10 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onBackPressed() {
+    // empty so nothing happens
+    }
 
     private void loginUserAccount() {
         //progressBar.setVisibility(View.VISIBLE);
@@ -117,7 +121,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
     private void switchSignUp(){
-        Intent switchActivityIntent = new Intent(this, MainActivity.class);
+        Intent switchActivityIntent = new Intent(this, SignupActivity.class);
         startActivity(switchActivityIntent);
     }
 
