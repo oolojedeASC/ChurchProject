@@ -35,6 +35,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText emailView;
     private EditText passwordView;
     private FirebaseAuth mAuth;
+    private EditText fpEmail;
 
 
     @Override
@@ -44,11 +45,10 @@ public class LoginActivity extends AppCompatActivity {
 
 
         //Try method removes the top bar from activity
-        try
-        {
+        try {
             this.getSupportActionBar().hide();
+        } catch (NullPointerException e) {
         }
-        catch (NullPointerException e){}
 
 
         mAuth = FirebaseAuth.getInstance();
@@ -65,39 +65,33 @@ public class LoginActivity extends AppCompatActivity {
         forgotPassView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
-                //Uncomment the below code to Set the message and title from the strings.xml file
-                builder.setMessage(R.string.dialog_message) .setTitle(R.string.dialog_title);
+                // Create an alert builder
+                AlertDialog.Builder builder
+                        = new AlertDialog.Builder(LoginActivity.this);
+                builder.setTitle("Forgot Password");
 
-                //Setting message manually and performing action on button click
-                builder.setMessage("Do you want to close this application ?")
-                        .setCancelable(false)
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                finish();
-                                Toast.makeText(getApplicationContext(),"you choose yes action for alertbox",
-                                        Toast.LENGTH_SHORT).show();
-                            }
-                        })
-                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                //  Action for 'NO' Button
-                                dialog.cancel();
-                                Toast.makeText(getApplicationContext(),"you choose no action for alertbox",
-                                        Toast.LENGTH_SHORT).show();
+                // set the custom layout
+                final View customLayout = getLayoutInflater().inflate( R.layout.activity_forgot_password, null);
+                builder.setView(customLayout);
+
+                // add a button
+                builder
+                        .setPositiveButton("Send", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick( DialogInterface dialog, int which) {
+                                // send data from the
+                                // AlertDialog to the Activity
+                                EditText editText = customLayout.findViewById(R.id.fpEmailAddress);
+                                sendDialogDataToActivity(editText.getText().toString());
                             }
                         });
-                //Creating dialog box
-                AlertDialog alert = builder.create();
-                //Setting the title manually
-                alert.setTitle("AlertDialogExample");
-                alert.show();
+
+                // create and show
+                // the alert dialog
+                AlertDialog dialog = builder.create();
+                dialog.show();
             }
         });
-
-
-
-
 
         logBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -105,9 +99,29 @@ public class LoginActivity extends AppCompatActivity {
                 loginUserAccount();
             }
         });
-
-
     }
+
+
+
+        // Reset password with firebase
+        private void sendDialogDataToActivity(String data){
+            FirebaseAuth.getInstance().sendPasswordResetEmail(data)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Toast.makeText(LoginActivity.this, "Email Sent!",
+                                        Toast.LENGTH_LONG).show();
+                            }else{
+                                Toast.makeText(LoginActivity.this, "Email not found or could not be sent",
+                                        Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    });
+        }
+
+
+
 
     @Override
     public void onBackPressed() {
@@ -159,10 +173,6 @@ public class LoginActivity extends AppCompatActivity {
         startActivity(switchActivityIntent);
     }
 
-    private void switchForgotPass(){
-        Intent switchActivityIntent = new Intent(this, ForgotPopUp.class);
-        startActivity(switchActivityIntent);
-    }
 
     private void initializeUI() {
         logBtn = findViewById(R.id.loginButton);
@@ -170,6 +180,7 @@ public class LoginActivity extends AppCompatActivity {
         regView = findViewById(R.id.registerView);
         emailView = findViewById(R.id.editTextEmail);
         passwordView = findViewById(R.id.editTextPassword);
+        fpEmail = findViewById(R.id.fpEmailAddress);
 
         //Add progress bars if you have time
         // progressBar = findViewById(R.id.progressBar);
