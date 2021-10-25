@@ -24,9 +24,6 @@ import com.google.firebase.auth.FirebaseUser;
 
 import static android.content.ContentValues.TAG;
 
-
-
-//Need to make sure you cant go back from main activity using the back button on a phone.
 public class LoginActivity extends AppCompatActivity {
 
     private Button logBtn;
@@ -122,7 +119,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
 
-
+//Overrides phone back button
     @Override
     public void onBackPressed() {
     // empty so nothing happens
@@ -153,7 +150,7 @@ public class LoginActivity extends AppCompatActivity {
                             Toast.makeText(getApplicationContext(), "Login successful!", Toast.LENGTH_LONG).show();
                             //progressBar.setVisibility(View.GONE);
 
-                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                            Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
                             startActivity(intent);
                         }
                         else {
